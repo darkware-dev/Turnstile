@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/turnstyle.iml" filepath="$PROJECT_DIR$/turnstyle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../turnstyle/turnstile.iml" filepath="$PROJECT_DIR$/../turnstyle/turnstile.iml" />
     </modules>
   </component>
 </project>
