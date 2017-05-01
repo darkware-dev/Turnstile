@@ -16,7 +16,7 @@
  =
  =============================================================================*/
 
-package org.darkware.turnstyle;
+package org.darkware.turnstile;
 
 import java.time.temporal.ChronoUnit;
 

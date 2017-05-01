@@ -16,7 +16,7 @@
  =
  =============================================================================*/
 
-package org.darkware.turnstyle;
+package org.darkware.turnstile;
 
 import org.assertj.core.data.Offset;
 import org.junit.Test;
