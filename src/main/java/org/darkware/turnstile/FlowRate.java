@@ -18,6 +18,7 @@
 
 package org.darkware.turnstile;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
 
 import java.time.Duration;
@@ -48,8 +49,14 @@ public class FlowRate
 {
     private static final Pattern FLOWRATE_PATTERN = Pattern.compile("(\\d+(\\.\\d+)?)([A-Za-z]*)/(\\d*)([a-z]+)");
 
+    private static final boolean isIntegerValue(final double val)
+    {
+        return (val == (double)(int)val);
+    }
+
     private final double volume;
     private final Duration duration;
+    private final boolean integerVolume;
 
     public FlowRate(final double volume, final Duration duration)
     {
@@ -57,6 +64,7 @@ public class FlowRate
 
         this.volume = volume;
         this.duration = duration;
+        this.integerVolume = FlowRate.isIntegerValue(this.volume);
     }
 
     /**
@@ -83,6 +91,7 @@ public class FlowRate
             Preconditions.checkArgument(this.volume > 0, "Rate volume must be positive.");
 
             this.duration = Duration.of(unitCount, unit);
+            this.integerVolume = FlowRate.isIntegerValue(this.volume);
         }
         else
         {
@@ -108,5 +117,21 @@ public class FlowRate
     public Duration getDuration()
     {
         return this.duration;
+    }
+
+    @Override
+    public boolean equals(final Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof FlowRate)) return false;
+        final FlowRate flowRate = (FlowRate) o;
+        return Double.compare(flowRate.volume, volume) == 0 &&
+               Objects.equal(duration, flowRate.duration);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hashCode(volume, duration);
     }
 }
