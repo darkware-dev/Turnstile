@@ -49,11 +49,6 @@ public class FlowRate
 {
     private static final Pattern FLOWRATE_PATTERN = Pattern.compile("(\\d+(\\.\\d+)?)([A-Za-z]*)/(\\d*)([a-z]+)");
 
-    private static final boolean isIntegerValue(final double val)
-    {
-        return (val - Math.floor(val)) == 0.0;
-    }
-
     private final double volume;
     private final Duration duration;
 
