@@ -32,7 +32,6 @@ import java.util.concurrent.locks.StampedLock;
  */
 public class Turnstile
 {
-    private final Object lock;
     private final StampedLock block;
     private Long blockId;
 
@@ -48,7 +47,6 @@ public class Turnstile
     {
         super();
 
-        this.lock = new Object();
         this.block = new StampedLock();
 
         this.meter = meter;

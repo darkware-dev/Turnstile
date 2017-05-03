@@ -51,20 +51,24 @@ public class FlowRate
 
     private static final boolean isIntegerValue(final double val)
     {
-        return ((val - Math.floor(val)) == 0.0);
+        return (val - Math.floor(val)) == 0.0;
     }
 
     private final double volume;
     private final Duration duration;
-    private final boolean integerVolume;
 
+    /**
+     * Create a new {@link FlowRate} with the explicit rate.
+     *
+     * @param volume The number of events to allow per duration.
+     * @param duration The {@link Duration} to allow the volume of events to pass.
+     */
     public FlowRate(final double volume, final Duration duration)
     {
         super();
 
         this.volume = volume;
         this.duration = duration;
-        this.integerVolume = FlowRate.isIntegerValue(this.volume);
     }
 
     /**
@@ -83,7 +87,7 @@ public class FlowRate
             this.volume = factor.apply(Double.parseDouble(parser.group(1)));
             final String unitCountText = parser.group(4);
             final long unitCount = (unitCountText.length() > 0) ? Long.parseLong(unitCountText) : 1L;
-            final ChronoUnit unit = Optional.ofNullable(FlowRateUnit.valueOf(parser.group(5)))
+            final ChronoUnit unit = Optional.ofNullable(FlowRateUnit.valueOf(parser.group(5).toUpperCase()))
                                             .orElseThrow(() -> new IllegalArgumentException("Could not parse time unit."))
                                             .getChronoUnit();
 
@@ -91,7 +95,6 @@ public class FlowRate
             Preconditions.checkArgument(this.volume > 0, "Rate volume must be positive.");
 
             this.duration = Duration.of(unitCount, unit);
-            this.integerVolume = FlowRate.isIntegerValue(this.volume);
         }
         else
         {

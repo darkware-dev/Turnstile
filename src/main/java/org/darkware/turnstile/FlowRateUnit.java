@@ -34,15 +34,15 @@ import java.time.temporal.ChronoUnit;
 enum FlowRateUnit
 {
     /** Milliseconds. */
-    ms(ChronoUnit.MILLIS),
+    MS(ChronoUnit.MILLIS),
     /** Seconds. */
-    s(ChronoUnit.SECONDS),
+    S(ChronoUnit.SECONDS),
     /** Minutes. */
-    m(ChronoUnit.MINUTES),
+    M(ChronoUnit.MINUTES),
     /** Hours. */
-    h(ChronoUnit.HOURS),
+    H(ChronoUnit.HOURS),
     /** Days. */
-    d(ChronoUnit.DAYS),
+    D(ChronoUnit.DAYS),
     ;
 
     /** The actual {@link ChronoUnit} which is represented. */
