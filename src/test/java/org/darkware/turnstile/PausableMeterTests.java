@@ -18,10 +18,13 @@
 
 package org.darkware.turnstile;
 
-import org.assertj.core.data.Offset;
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author jeff@darkware.org
@@ -30,15 +33,19 @@ import static org.assertj.core.api.Assertions.*;
 public class PausableMeterTests
 {
     @Test
-    public void pause() throws InterruptedException
+    public void pause() throws InterruptedException, NoSuchAlgorithmException
     {
         final PausableMeter meter = new RateControlledMeter("100/s");
 
         meter.start();
-        Thread.sleep(200);
+        // Do some work
+
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        digest.digest("This is a bunch of text to generate work".getBytes(StandardCharsets.UTF_8));
+
         meter.pause();
 
         assertThat(meter.getElapsedTime()).isZero();
-        assertThat(meter.getPreviousElapsedTime()).isCloseTo(200L, Offset.offset(10L));
+        assertThat(meter.getPreviousElapsedTime()).isNotZero();
     }
 }
