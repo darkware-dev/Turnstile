@@ -51,7 +51,7 @@ public class FlowRate
 
     private static final boolean isIntegerValue(final double val)
     {
-        return (val == (double)(int)val);
+        return ((val - Math.floor(val)) == 0.0);
     }
 
     private final double volume;
