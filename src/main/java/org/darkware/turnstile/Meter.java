@@ -117,7 +117,7 @@ public abstract class Meter
      * @throws InterruptedException If the thread is interrupted while being blocked to enforce the {@link Meter}'s
      * policy.
      */
-    protected void delay(final long eventCount) throws InterruptedException
+    public void delay(final long eventCount) throws InterruptedException
     {
         final long delayMillis = this.getDelayFor(eventCount);
 
