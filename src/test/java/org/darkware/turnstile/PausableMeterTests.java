@@ -35,7 +35,7 @@ public class PausableMeterTests
     @Test
     public void pause() throws InterruptedException, NoSuchAlgorithmException
     {
-        final PausableMeter meter = new RateControlledMeter("100/s");
+        final Meter meter = new NoopMeter();
 
         meter.start();
         // Do some work

@@ -26,10 +26,19 @@ package org.darkware.turnstile;
  */
 public abstract class Meter
 {
+    private long previousElapsed;
+    private long lastStart;
+    private boolean paused;
+
     /**
      * Reset this meter to a freshly-initialized state.
      */
-    protected abstract void reset();
+    protected void reset()
+    {
+        this.previousElapsed = 0L;
+        this.lastStart = -1L;
+        this.paused = true;
+    }
 
     /**
      * Check to see if this meter is currently paused.
@@ -37,20 +46,54 @@ public abstract class Meter
      * @return {@code true} if the meter is in a paused (or never started) state, {@code false} if the meter is
      * currently started and running.
      */
-    protected abstract boolean isPaused();
+    protected boolean isPaused()
+    {
+        return this.paused;
+    }
 
     /**
      * Start measuring the passage of time in this meter. Any policies which change the rate of flow through the
      * meter based on how much time has passed will see side effects because of this.
      */
-    protected abstract void start();
+    protected void start()
+    {
+        this.lastStart = System.currentTimeMillis();
+        this.paused = false;
+    }
 
     /**
      * Stop measuring the passage of time in this meter. The amount of time that has passed before being paused is
      * still remembered and will be taken into account for policies based on the passage of time. They will operate
      * as if the paused period did not exist.
      */
-    protected abstract void pause();
+    protected void pause()
+    {
+        this.previousElapsed += this.getElapsedTime();
+        this.lastStart = -1;
+        this.paused = true;
+    }
+
+    /**
+     * Fetch the amount of time that has elapsed before the most recent pause (if any).
+     *
+     * @return The amount of time in milliseconds.
+     */
+    protected long getPreviousElapsedTime()
+    {
+        return this.previousElapsed;
+    }
+
+    /**
+     * Fetch the amount of time that has passed since the most recent start.
+     *
+     * @return The amount of time in milliseconds.
+     */
+    protected long getElapsedTime()
+    {
+        if (this.isPaused()) return 0L;
+
+        return System.currentTimeMillis() - this.lastStart;
+    }
 
     /**
      * Calculate the delay to apply to the given serial event identifer. This would be the amount of time that

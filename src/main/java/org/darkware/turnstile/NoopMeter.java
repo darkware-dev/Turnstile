@@ -22,7 +22,7 @@ package org.darkware.turnstile;
  * @author jeff@darkware.org
  * @since 2017-05-02
  */
-public class NoopMeter extends PausableMeter
+public class NoopMeter extends Meter
 {
     @Override
     protected long getDelayFor(final long eventCount)

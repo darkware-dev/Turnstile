@@ -22,7 +22,7 @@ package org.darkware.turnstile;
  * @author jeff@darkware.org
  * @since 2017-05-01
  */
-public class RateControlledMeter extends PausableMeter
+public class RateControlledMeter extends Meter
 {
     /** The rate that events can flow through the meter. */
     private final FlowRate rate;
