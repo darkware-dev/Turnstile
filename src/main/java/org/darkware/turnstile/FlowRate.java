@@ -45,12 +45,13 @@ import java.util.regex.Pattern;
  * @author jeff@darkware.org
  * @since 2017-04-30
  */
-public class FlowRate
+public class FlowRate implements Comparable<FlowRate>
 {
     private static final Pattern FLOWRATE_PATTERN = Pattern.compile("(\\d+(\\.\\d+)?)([A-Za-z]*)/(\\d*)([a-z]+)");
 
     private final double volume;
     private final Duration duration;
+    private final double volumePerSecond;
 
     /**
      * Create a new {@link FlowRate} with the explicit rate.
@@ -64,6 +65,8 @@ public class FlowRate
 
         this.volume = volume;
         this.duration = duration;
+
+        this.volumePerSecond = (volume * 1000) / (double)duration.toMillis();
     }
 
     /**
@@ -90,6 +93,8 @@ public class FlowRate
             Preconditions.checkArgument(this.volume > 0, "Rate volume must be positive.");
 
             this.duration = Duration.of(unitCount, unit);
+
+            this.volumePerSecond = (volume * 1000) / (double)duration.toMillis();
         }
         else
         {
@@ -117,6 +122,17 @@ public class FlowRate
         return this.duration;
     }
 
+    /**
+     * Fetch the number of events which are allowed to pass per second. This is used as a normalized measure
+     * for comparing {@link FlowRate}s.
+     *
+     * @return The number of events per second, in partial events, as {@code double}.
+     */
+    protected double getVolumePerSecond()
+    {
+        return this.volumePerSecond;
+    }
+
     @Override
     public boolean equals(final Object o)
     {
@@ -131,5 +147,11 @@ public class FlowRate
     public int hashCode()
     {
         return Objects.hashCode(volume, duration);
+    }
+
+    @Override
+    public int compareTo(final FlowRate that)
+    {
+        return Double.compare(this.getVolumePerSecond(), that.getVolumePerSecond());
     }
 }

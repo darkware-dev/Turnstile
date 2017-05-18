@@ -18,6 +18,7 @@
 
 package org.darkware.turnstile;
 
+import com.sun.org.apache.bcel.internal.generic.FLOAD;
 import org.assertj.core.data.Offset;
 import org.junit.Test;
 
@@ -127,5 +128,59 @@ public class FlowRateTests
     public void parseFail_badDurationCount()
     {
         assertThatThrownBy(() -> new FlowRate("1/1.2s")).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    public void normalizedRate_simple()
+    {
+        FlowRate rate = new FlowRate("1/s");
+
+        assertThat(rate.getVolumePerSecond()).isEqualTo(1.0, Offset.offset(0.01));
+    }
+
+    @Test
+    public void normalizedRate_superSlow()
+    {
+        FlowRate rate = new FlowRate("10/20h");
+
+        assertThat(rate.getVolumePerSecond()).isEqualTo(0.0001389, Offset.offset(0.00001));
+    }
+
+    @Test
+    public void normalizedRate_superFast()
+    {
+        FlowRate rate = new FlowRate("5/ms");
+
+        assertThat(rate.getVolumePerSecond()).isEqualTo(5000.0, Offset.offset(0.01));
+    }
+
+    @Test
+    public void compare_easy()
+    {
+        FlowRate rate1 = new FlowRate("10/s");
+        FlowRate rate2 = new FlowRate("400/ms");
+
+        assertThat(rate1.compareTo(rate2)).isLessThan(0);
+        assertThat(rate2.compareTo(rate1)).isGreaterThan(0);
+    }
+
+    @Test
+    public void compare_same()
+    {
+        FlowRate rate1 = new FlowRate("10/s");
+        FlowRate rate2 = new FlowRate("10/s");
+
+        assertThat(rate1.compareTo(rate2)).isZero();
+        assertThat(rate2.compareTo(rate1)).isZero();
+    }
+
+    @Test
+    public void compare_equalButDifferentUnits()
+    {
+        FlowRate rate1 = new FlowRate("2/s");
+        FlowRate rate2 = new FlowRate("7200/h");
+
+        assertThat(rate1.compareTo(rate2)).isZero();
+        assertThat(rate2.compareTo(rate1)).isZero();
     }
 }
