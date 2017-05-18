@@ -53,10 +53,4 @@ public class TestingMeter extends Meter
     {
         return 0;
     }
-
-    @Override
-    protected void delay(final long eventCount) throws InterruptedException
-    {
-
-    }
 }
