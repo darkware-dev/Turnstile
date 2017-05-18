@@ -41,7 +41,10 @@ public class PausableMeterTests
         // Do some work
 
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
-        digest.digest("This is a bunch of text to generate work".getBytes(StandardCharsets.UTF_8));
+
+        StringBuilder buffer = new StringBuilder();
+        for (int i = 0; i < 10000; i++) buffer.append("This is a bunch of text to generate work");
+        digest.digest(buffer.toString().getBytes(StandardCharsets.UTF_8));
 
         meter.pause();
 
