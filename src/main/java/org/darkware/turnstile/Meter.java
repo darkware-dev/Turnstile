@@ -120,6 +120,7 @@ public abstract class Meter
     public void delay(final long eventCount) throws InterruptedException
     {
         final long delayMillis = this.getDelayFor(eventCount);
+        Turnstile.log.trace("Delaying thread: {}ms", delayMillis);
 
         if (delayMillis > 0)
         {
