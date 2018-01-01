@@ -56,4 +56,16 @@ public class SystemTimeProviderTests extends BaseTimeProviderTests<SystemTimePro
     {
         return new SystemTimeProvider();
     }
+
+    @Test
+    public void passageOfTime() throws InterruptedException
+    {
+        final long now = System.currentTimeMillis();
+        final long passageMs = 120;
+
+        assertThat(this.provider.getTimestamp()).isCloseTo(now, Offset.offset(10L));
+        Thread.sleep(passageMs);
+        assertThat(this.provider.getTimestamp()).isCloseTo(now+passageMs, Offset.offset(10L));
+
+    }
 }
