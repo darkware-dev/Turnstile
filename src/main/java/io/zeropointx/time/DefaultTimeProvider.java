@@ -18,6 +18,9 @@
 
 package io.zeropointx.time;
 
+import java.util.concurrent.locks.StampedLock;
+import java.util.function.Consumer;
+
 /**
  * This is a simple facade to manage a system default {@link TimeProvider} for use by other objects. This is done
  * to simplify the sharing of {@link TimeProvider}s across objects for those who don't want to set up a full
@@ -29,6 +32,7 @@ package io.zeropointx.time;
 public class DefaultTimeProvider
 {
     private static TimeProvider defaultProvider = new SystemTimeProvider();
+    private static final StampedLock lock = new StampedLock();
 
     /**
      * Fetch the current system default {@link TimeProvider}.
@@ -48,6 +52,32 @@ public class DefaultTimeProvider
      */
     public static void setDefaultProvider(final TimeProvider provider)
     {
-        DefaultTimeProvider.defaultProvider = provider;
+        final long lockId = DefaultTimeProvider.lock.writeLock();
+        try
+        {
+            DefaultTimeProvider.defaultProvider = provider;
+        }
+        finally
+        {
+            DefaultTimeProvider.lock.unlockWrite(lockId);
+        }
+    }
+
+    public static void useTemporaryProvider(final TimeProvider provider, Consumer<TimeProvider> action)
+    {
+        final long lockId = DefaultTimeProvider.lock.writeLock();
+        TimeProvider original = null;
+        try
+        {
+            original = DefaultTimeProvider.defaultProvider;
+            DefaultTimeProvider.defaultProvider = provider;
+
+            action.accept(provider);
+        }
+        finally
+        {
+            if (original != null) DefaultTimeProvider.defaultProvider = original;
+            DefaultTimeProvider.lock.unlockWrite(lockId);
+        }
     }
 }

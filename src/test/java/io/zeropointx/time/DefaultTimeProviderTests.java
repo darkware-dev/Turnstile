@@ -20,7 +20,10 @@ package io.zeropointx.time;
 
 import org.junit.Test;
 
-import static org.assertj.core.api.Assertions.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author jeff@mind-trick.net
@@ -43,5 +46,20 @@ public class DefaultTimeProviderTests
         assertThat(DefaultTimeProvider.getDefault()).isNotSameAs(provider);
         DefaultTimeProvider.setDefaultProvider(provider);
         assertThat(DefaultTimeProvider.getDefault()).isSameAs(provider);
+    }
+
+    @Test
+    public void tempTimeProvider()
+    {
+        final TimeProvider provider = new ManualTimeProvider();
+        final TimeProvider originalProvider = DefaultTimeProvider.getDefault();
+        final List<TimeProvider> tempProviderHolder = new ArrayList<>();
+
+        DefaultTimeProvider.useTemporaryProvider(provider, p -> {
+            tempProviderHolder.add(DefaultTimeProvider.getDefault());
+        });
+
+        assertThat(DefaultTimeProvider.getDefault()).isSameAs(originalProvider);
+        assertThat(tempProviderHolder.get(0)).isSameAs(provider);
     }
 }
