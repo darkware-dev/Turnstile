@@ -19,7 +19,9 @@
 package io.zeropointx.time;
 
 import org.assertj.core.data.Offset;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.time.ZoneId;
@@ -33,7 +35,21 @@ import static org.assertj.core.api.Assertions.*;
  */
 public abstract class BaseTimeProviderTests<T extends TimeProvider>
 {
+    private static TimeProvider originalDefaultProvider;
+
     protected T provider;
+
+    @BeforeClass
+    public static void protectCurrentDefault()
+    {
+        BaseTimeProviderTests.originalDefaultProvider = DefaultTimeProvider.getDefault();
+    }
+
+    @AfterClass
+    public static void restoreOriginalDefault()
+    {
+        DefaultTimeProvider.setDefaultProvider(BaseTimeProviderTests.originalDefaultProvider);
+    }
 
     @Before
     public void baseSetup()
