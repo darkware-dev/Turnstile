@@ -19,16 +19,13 @@
 package org.darkware.turnstile;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import io.zeropointx.time.DefaultTimeProvider;
-import io.zeropointx.time.SystemTimeProvider;
 import io.zeropointx.time.TimeProvider;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
 import java.util.Deque;
-import java.util.function.Function;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
  * A {@link TurnstileObserver} receives event notifications from a {@link Turnstile} and provides methods
@@ -61,7 +58,7 @@ public class TurnstileObserver
     {
         super();
 
-        this.lastEvents = Lists.newLinkedList();
+        this.lastEvents = new ConcurrentLinkedDeque<>();
         this.timeProvider = timeProvider;
     }
 
@@ -104,12 +101,9 @@ public class TurnstileObserver
      */
     protected void pruneWindow()
     {
-        synchronized (this.lastEvents)
+        while (this.lastEvents.size() > TurnstileObserver.IDEAL_SIZE)
         {
-            while (this.lastEvents.size() > TurnstileObserver.IDEAL_SIZE)
-            {
-                this.lastEvents.pollLast();
-            }
+            this.lastEvents.pollLast();
         }
     }
 
@@ -227,13 +221,10 @@ public class TurnstileObserver
      */
     protected EventRecord recordEvent(final long sequenceNumber, final long systemTime)
     {
-        synchronized (this.lastEvents)
-        {
-            EventRecord created = new EventRecord(sequenceNumber, systemTime);
-            this.lastEvents.push(created);
+        EventRecord created = new EventRecord(sequenceNumber, systemTime);
+        this.lastEvents.push(created);
 
-            return created;
-        }
+        return created;
     }
 
     /**
