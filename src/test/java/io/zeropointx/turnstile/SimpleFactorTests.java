@@ -1,6 +1,6 @@
 /*==============================================================================
  =
- = Copyright 2017: darkware.org
+ = Copyright 2018: darkware.org
  =
  =    Licensed under the Apache License, Version 2.0 (the "License");
  =    you may not use this file except in compliance with the License.
@@ -16,26 +16,35 @@
  =
  =============================================================================*/
 
-package org.darkware.turnstile;
+package io.zeropointx.turnstile;
 
+import org.assertj.core.data.Offset;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author jeff@darkware.org
- * @since 2017-05-02
+ * @since 2017-04-30
  */
-public class NoopMeterTests
+public class SimpleFactorTests
 {
     @Test
-    public void basic()
+    public void multiplier()
     {
-        final NoopMeter meter = new NoopMeter();
-
-        for (int i = 1; i < 1000; i++)
-        {
-            assertThat(meter.getDelayFor(i)).isEqualTo(0L);
-        }
+        assertThat(SimpleFactor.K.getMultiplier()).isEqualTo(1000L);
     }
+
+    @Test
+    public void apply_long()
+    {
+        assertThat(SimpleFactor.K.apply(4L)).isEqualTo(4L * SimpleFactor.K.getMultiplier());
+    }
+
+    @Test
+    public void apply_double()
+    {
+        assertThat(SimpleFactor.K.apply(3.1137)).isEqualTo(3.1137 * SimpleFactor.K.getMultiplier(), Offset.offset(0.02));
+    }
+
 }

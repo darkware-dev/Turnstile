@@ -1,6 +1,6 @@
 /*==============================================================================
  =
- = Copyright 2017: darkware.org
+ = Copyright 2018: darkware.org
  =
  =    Licensed under the Apache License, Version 2.0 (the "License");
  =    you may not use this file except in compliance with the License.
@@ -16,35 +16,41 @@
  =
  =============================================================================*/
 
-package org.darkware.turnstile;
-
-import org.assertj.core.data.Offset;
-import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.*;
+package io.zeropointx.turnstile;
 
 /**
  * @author jeff@darkware.org
- * @since 2017-04-30
+ * @since 2017-05-02
  */
-public class SimpleFactorTests
+public class TestingMeter extends Meter
 {
-    @Test
-    public void multiplier()
+    @Override
+    protected void reset()
     {
-        assertThat(SimpleFactor.K.getMultiplier()).isEqualTo(1000L);
+
     }
 
-    @Test
-    public void apply_long()
+    @Override
+    protected boolean isPaused()
     {
-        assertThat(SimpleFactor.K.apply(4L)).isEqualTo(4L * SimpleFactor.K.getMultiplier());
+        return false;
     }
 
-    @Test
-    public void apply_double()
+    @Override
+    protected void start()
     {
-        assertThat(SimpleFactor.K.apply(3.1137)).isEqualTo(3.1137 * SimpleFactor.K.getMultiplier(), Offset.offset(0.02));
+
     }
 
+    @Override
+    protected void pause()
+    {
+
+    }
+
+    @Override
+    protected long getDelayFor(final long eventCount)
+    {
+        return 0;
+    }
 }

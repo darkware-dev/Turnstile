@@ -1,6 +1,6 @@
 /*==============================================================================
  =
- = Copyright 2017: darkware.org
+ = Copyright 2018: darkware.org
  =
  =    Licensed under the Apache License, Version 2.0 (the "License");
  =    you may not use this file except in compliance with the License.
@@ -16,17 +16,26 @@
  =
  =============================================================================*/
 
-package org.darkware.turnstile;
+package io.zeropointx.turnstile;
+
+import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * @author jeff@darkware.org
  * @since 2017-05-02
  */
-public class NoopMeter extends Meter
+public class NoopMeterTests
 {
-    @Override
-    protected long getDelayFor(final long eventCount)
+    @Test
+    public void basic()
     {
-        return 0L;
+        final NoopMeter meter = new NoopMeter();
+
+        for (int i = 1; i < 1000; i++)
+        {
+            assertThat(meter.getDelayFor(i)).isEqualTo(0L);
+        }
     }
 }

@@ -1,6 +1,6 @@
 /*==============================================================================
  =
- = Copyright 2017: darkware.org
+ = Copyright 2018: darkware.org
  =
  =    Licensed under the Apache License, Version 2.0 (the "License");
  =    you may not use this file except in compliance with the License.
@@ -16,41 +16,17 @@
  =
  =============================================================================*/
 
-package org.darkware.turnstile;
+package io.zeropointx.turnstile;
 
 /**
  * @author jeff@darkware.org
  * @since 2017-05-02
  */
-public class TestingMeter extends Meter
+public class NoopMeter extends Meter
 {
-    @Override
-    protected void reset()
-    {
-
-    }
-
-    @Override
-    protected boolean isPaused()
-    {
-        return false;
-    }
-
-    @Override
-    protected void start()
-    {
-
-    }
-
-    @Override
-    protected void pause()
-    {
-
-    }
-
     @Override
     protected long getDelayFor(final long eventCount)
     {
-        return 0;
+        return 0L;
     }
 }
