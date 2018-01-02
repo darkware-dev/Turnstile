@@ -19,6 +19,8 @@
 package org.darkware.turnstile;
 
 import com.google.common.base.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.StampedLock;
@@ -32,11 +34,14 @@ import java.util.concurrent.locks.StampedLock;
  */
 public class Turnstile
 {
+    protected final static Logger log = LoggerFactory.getLogger("Turnstile");
+
     private final StampedLock block;
     private Long blockId;
 
     private final Meter meter;
-    private AtomicLong eventCount;
+    private final TurnstileObserver observer;
+    private final AtomicLong eventCount;
 
     /**
      * Create a new {@link Turnstile} with the configured {@link Meter}.
@@ -48,6 +53,7 @@ public class Turnstile
         super();
 
         this.block = new StampedLock();
+        this.observer = new TurnstileObserver();
 
         this.meter = meter;
 
@@ -75,6 +81,16 @@ public class Turnstile
     public long getEventsSeen()
     {
         return this.eventCount.get();
+    }
+
+    /**
+     * Fetch the observer which is recording metrics for this {@link Turnstile}.
+     *
+     * @return A {@link TurnstileObserver} attached to this turnstile.
+     */
+    public TurnstileObserver getObserver()
+    {
+        return this.observer;
     }
 
     /**
@@ -157,6 +173,7 @@ public class Turnstile
             this.meter.delay(this.eventCount.incrementAndGet());
 
             final long checkBlock = this.block.readLock();
+            this.observer.observe(this.eventCount.get());
             this.block.unlockRead(checkBlock);
         }
     }
