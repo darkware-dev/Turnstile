@@ -48,7 +48,7 @@ public class DefaultTimeProvider
      * Set the {@link TimeProvider} to use for future requests for the default provider. Setting the provider
      * <em>will not</em> have any effect on any objects previously fetched.
      *
-     * @param provider
+     * @param provider The {@link TimeProvider} to adopt as the system default.
      */
     public static void setDefaultProvider(final TimeProvider provider)
     {
@@ -63,6 +63,24 @@ public class DefaultTimeProvider
         }
     }
 
+    /**
+     * Use a temporary {@link TimeProvider} for the supplied action. This will set the system default to the supplied
+     * provider for the duration of the action while blocking any attempts to change the system default. This is
+     * primarily useful for testing, but some highly specialized actions might find use for it.
+     * <p>
+     * <em>Note:</em> During the time the action is running, other threads that retrieve the default provider may get
+     * the temporary provider in use. This is halfway by design, as it will permit multi-threaded actions, however it
+     * poses a risk to concurrent applications.
+     * <p>
+     * <em>Note:</em> Since attempts to change the provider while this action is running, there are risks to
+     * application performance if other code attempts to change the provider during this method's execution. Other
+     * attempts to change the default provider will result in the thread being blocked. As yet, there is no way to
+     * detect and avoid this situation. Use this capability with care.
+     *
+     * @param provider The temporary {@link TimeProvider} to use.
+     * @param action The action to perform, as a {@link Consumer}. The action takes the supplied {@link TimeProvider}
+     * as its supplied parameter.
+     */
     public static void useTemporaryProvider(final TimeProvider provider, Consumer<TimeProvider> action)
     {
         final long lockId = DefaultTimeProvider.lock.writeLock();
